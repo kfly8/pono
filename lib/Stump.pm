@@ -1,13 +1,38 @@
-package Stump;
-use 5.008001;
-use strict;
-use warnings;
+use v5.40;
+use utf8;
+use experimental qw(class);
 
-our $VERSION = "0.01";
+use HTTP::Status ();
+use Cpanel::JSON::XS::Type ();
 
+class Stump 0.01 :isa(Stump::Base) {
+    use Stump::Router::Linear;
+    use Carp ();
 
+    sub import($class) {
+        my $target = caller;
+        $_->import for qw(strict warnings utf8);
 
-1;
+        feature->import(':5.40');
+        builtin->import(':5.40');
+        experimental->import('class');
+
+        {
+            local $Exporter::ExportLevel = 1;
+            HTTP::Status->import(':constants');
+            Cpanel::JSON::XS::Type->import();
+        }
+    }
+
+    ADJUST {
+        if (!$self->router) {
+            $self->router(Stump::Router::Linear->new);
+        }
+
+        Carp::croak 'router must be a Stump::Router subclass' unless $self->router isa Stump::Router;
+    }
+}
+
 __END__
 
 =encoding utf-8
@@ -19,6 +44,11 @@ Stump - It's new $module
 =head1 SYNOPSIS
 
     use Stump;
+
+    my $app = Stump->new;
+    $app->get('/', sub ($c) { $c->text('Hello Stump!'); });
+
+    $app->start;
 
 =head1 DESCRIPTION
 
