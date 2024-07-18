@@ -60,10 +60,7 @@ class Stump::Base {
     }
 
     method not_found_handler($c) {
-        $c->response->code(404);
-        $c->response->body('Not Found');
-        $c->response->header('Content-Type', 'text/plain');
-        $c->response;
+        return $c->text(404, 'Not Found');
     }
 
     method router($r = undef) {
