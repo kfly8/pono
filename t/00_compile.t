@@ -1,9 +1,8 @@
-use strict;
-use Test::More 0.98;
+use v5.40;
+use Test2::V0;
 
-use_ok $_ for qw(
-    Stump
-);
+use Stump;
+
+pass;
 
 done_testing;
-

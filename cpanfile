@@ -13,7 +13,7 @@ requires 'HTTP::Parser';
 recommends 'HTTP::Parser::XS';
 
 on 'test' => sub {
-    requires 'Test::More', '0.98';
+    requires 'Test2::V0';
     requires 'Plack';
 };
 
