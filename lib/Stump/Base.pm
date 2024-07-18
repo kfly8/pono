@@ -51,12 +51,12 @@ class Stump::Base {
     }
 
     method error_handler($err, $c) {
-        warn $err;
+        if (blessed($err) && $err->can('response')) {
+            return $err->response;
+        }
 
-        $c->response->code(500);
-        $c->response->body('Internal Server Error');
-        $c->response->header('Content-Type', 'text/plain');
-        $c->response;
+        warn $err;
+        return $c->text(500, 'Internal Server Error');
     }
 
     method not_found_handler($c) {
