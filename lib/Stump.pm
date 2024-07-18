@@ -46,9 +46,11 @@ Stump - It's new $module
     use Stump;
 
     my $app = Stump->new;
-    $app->get('/', sub ($c) { $c->text('Hello Stump!'); });
+    $app->get('/', sub ($c) {
+        $c->text(HTTP_OK, 'Hello Stump!')
+    });
 
-    $app->start;
+    $app->psgi;
 
 =head1 DESCRIPTION
 
