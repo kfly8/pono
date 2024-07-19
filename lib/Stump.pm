@@ -10,7 +10,6 @@ class Stump 0.01 :isa(Stump::Base) {
     use Carp ();
 
     sub import($class) {
-        my $target = caller;
         $_->import for qw(strict warnings utf8);
 
         feature->import(':5.40');
