@@ -19,8 +19,25 @@ subtest 'GET Request' => sub {
             $c->html(201, '<h1>Stump!!!</h1>');
         });
 
+        subtest 'GET http://localhost/hello is ok', sub {
+            my $res = $app->test_request(GET 'http://localhost/hello');
+            is $res->code, 200;
+            is $res->content, 'hello';
+        };
+
+        subtest 'GET httphello is ng', sub {
+            my $res = $app->test_request(GET 'httphello');
+            is $res->code, 404;
+        };
+
         subtest 'GET /hello is ok', sub {
             my $res = $app->test_request(GET '/hello');
+            is $res->code, 200;
+            is $res->content, 'hello';
+        };
+
+        subtest 'GET hello is ok', sub {
+            my $res = $app->test_request(GET 'hello');
             is $res->code, 200;
             is $res->content, 'hello';
         };
@@ -30,6 +47,11 @@ subtest 'GET Request' => sub {
             is $res->code, 201;
             is $res->header('X-Custom'), 'This is Stump';
             is $res->content, '<h1>Stump!!!</h1>';
+        };
+
+        subtest 'GET / is not found', sub {
+            my $res = $app->test_request(GET '/');
+            is $res->code, 404;
         };
     }
 };
