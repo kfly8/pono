@@ -19,6 +19,10 @@ subtest 'GET Request' => sub {
             $c->html(201, '<h1>Stump!!!</h1>');
         });
 
+        $app->get('/hello-json', sub ($c) {
+            $c->json(200, { HELLO => 'world' });
+        });
+
         subtest 'GET http://localhost/hello is ok', sub {
             my $res = $app->test_request(GET 'http://localhost/hello');
             is $res->code, 200;
@@ -52,6 +56,13 @@ subtest 'GET Request' => sub {
         subtest 'GET / is not found', sub {
             my $res = $app->test_request(GET '/');
             is $res->code, 404;
+        };
+
+        subtest 'GET /hello-json', sub {
+            my $res = $app->test_request(GET '/hello-json');
+            is $res->code, 200;
+            is $res->header('Content-Type'), 'application/json';
+            is $res->json, { HELLO => 'world' };
         };
     }
 };

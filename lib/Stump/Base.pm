@@ -118,6 +118,8 @@ class Stump::Base {
 
         my $test = Plack::Test->create($self->psgi);
         my $res = $test->request($http_request);
+        # Stump::Response
+        # Stump::Response->new_from_psgi($res);
         $res;
     }
 }
