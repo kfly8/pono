@@ -14,7 +14,8 @@ recommends 'HTTP::Parser::XS';
 
 on 'test' => sub {
     requires 'Test2::V0';
-    requires 'Plack';
+    requires 'Unicode::GCString';
+    requires 'HTTP::Message::PSGI'; # (part of Plack)
     requires 'HTTP::Request::Common';
 };
 

@@ -1,4 +1,5 @@
 use v5.40;
+use utf8;
 use Test2::V0;
 
 use Stump;
@@ -20,7 +21,7 @@ subtest 'GET Request' => sub {
         });
 
         $app->get('/hello-json', sub ($c) {
-            $c->json(200, { HELLO => 'world' });
+            $c->json(200, { HELLO => '世界' });
         });
 
         subtest 'GET http://localhost/hello is ok', sub {
@@ -62,7 +63,7 @@ subtest 'GET Request' => sub {
             my $res = $app->test_request(GET '/hello-json');
             is $res->code, 200;
             is $res->header('Content-Type'), 'application/json';
-            is $res->json, { HELLO => 'world' };
+            is $res->json, { HELLO => '世界' };
         };
     }
 };

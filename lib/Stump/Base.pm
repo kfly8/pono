@@ -109,17 +109,9 @@ class Stump::Base {
     }
 
     method test_request($http_request) {
-        require Plack::Test
-            or Carp::croak 'Plack::Test is required';
-
-        unless ($http_request isa HTTP::Request) {
-            Carp::croak 'test_request() requires an HTTP::Request object';
-        }
-
-        my $test = Plack::Test->create($self->psgi);
+        require Stump::Test;
+        my $test = Stump::Test->new(app => $self);
         my $res = $test->request($http_request);
-        # Stump::Response
-        # Stump::Response->new_from_psgi($res);
         $res;
     }
 }
