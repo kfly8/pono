@@ -11,6 +11,20 @@ class Stump::Context {
     method res() { $response }
     method req() { $request }
 
+    method header($name, $value=undef) {
+        if (defined $value) {
+            $response->header($name, $value);
+        }
+        $response->header($name);
+    }
+
+    method html($code, $text) {
+        $response->code($code);
+        $response->header('Content-Type', 'text/html');
+        $response->body($text);
+        $response;
+    }
+
     method text($code, $text) {
         $response->code($code);
         $response->header('Content-Type', 'text/plain');
