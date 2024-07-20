@@ -15,5 +15,6 @@ recommends 'HTTP::Parser::XS';
 on 'test' => sub {
     requires 'Test2::V0';
     requires 'Plack';
+    requires 'HTTP::Request::Common';
 };
 
