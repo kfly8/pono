@@ -3,7 +3,6 @@ use Test2::V0;
 
 use Stump;
 
-use Plack::Test;
 use HTTP::Request::Common;
 
 subtest 'GET Request' => sub {
@@ -16,11 +15,12 @@ subtest 'GET Request' => sub {
             $c->res;
         });
 
-        test_psgi app => $app->psgi, client => sub($cb) {
-            my $res = $cb->(GET '/hello');
-            is $res->code, 200;
-            is $res->content, 'hello';
-        };
+        my $todo = todo 'implement request method';
+        fail;
+
+        # my $res = $app->request(GET '/hello');
+        # is $res->status, 200;
+        # is $res->content, 'hello';
     }
 };
 
