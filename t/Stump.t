@@ -14,9 +14,23 @@ subtest 'GET Request' => sub {
             $c->res;
         });
 
-        my $res = $app->test_request(GET '/hello');
-        is $res->code, 200;
-        is $res->content, 'hello';
+        $app->get('/hello-with-shortcuts', sub ($c) {
+            $c->header('X-Custom', 'This is Stump');
+            $c->html(201, '<h1>Stump!!!</h1>');
+        });
+
+        subtest 'GET /hello is ok', sub {
+            my $res = $app->test_request(GET '/hello');
+            is $res->code, 200;
+            is $res->content, 'hello';
+        };
+
+        subtest 'GET /hello-with-shortcuts is ok', sub {
+            my $res = $app->test_request(GET '/hello-with-shortcuts');
+            is $res->code, 201;
+            is $res->header('X-Custom'), 'This is Stump';
+            is $res->content, '<h1>Stump!!!</h1>';
+        };
     }
 };
 
