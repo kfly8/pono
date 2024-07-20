@@ -11,9 +11,9 @@ subtest 'GET Request' => sub {
         my $app = Stump->new;
 
         $app->get('/hello', sub ($c) {
-            $c->response->code(200);
-            $c->response->body('hello');
-            $c->response;
+            $c->res->status(200);
+            $c->res->body('hello');
+            $c->res;
         });
 
         test_psgi app => $app->psgi, client => sub($cb) {
