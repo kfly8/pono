@@ -21,6 +21,14 @@ class Stump::Response {
         $code;
     }
 
+    # alias for code
+    method status($s = undef) {
+        if (defined $s) {
+            $code = $s;
+        }
+        $code;
+    }
+
     method body($b = undef) {
         if (defined $b) {
             $body = $b;
