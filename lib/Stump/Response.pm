@@ -10,8 +10,11 @@ class Stump::Response {
     field $headers :reader = HTTP::Headers::Fast->new;
     field $body;
 
-    method header($name, $value) {
-        $headers->header($name, $value);
+    method header($name, $value=undef) {
+        if (defined $value) {
+            $headers->header($name, $value);
+        }
+        $headers->header($name);
     }
 
     method code($c = undef) {
