@@ -51,8 +51,8 @@ class Stump::Base {
     }
 
     method error_handler($err, $c) {
-        if (blessed($err) && $err->can('response')) {
-            return $err->response;
+        if (blessed($err) && $err->can('get_response')) {
+            return $err->get_response();
         }
 
         warn $err;
