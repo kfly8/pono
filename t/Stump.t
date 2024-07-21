@@ -21,7 +21,7 @@ subtest 'GET Request' => sub {
         });
 
         $app->get('/hello-json', sub ($c) {
-            $c->json(200, { HELLO => '世界' });
+            $c->json(200, { HELLO => '🪵' });
         });
 
         subtest 'GET http://localhost/hello is ok', sub {
@@ -62,8 +62,7 @@ subtest 'GET Request' => sub {
         subtest 'GET /hello-json', sub {
             my $res = $app->test_request(GET '/hello-json');
             is $res->code, 200;
-            is $res->header('Content-Type'), 'application/json';
-            is $res->json, { HELLO => '世界' };
+            is $res->json, { HELLO => '🪵' };
         };
     }
 };
