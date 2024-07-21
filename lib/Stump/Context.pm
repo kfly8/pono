@@ -18,6 +18,13 @@ class Stump::Context {
         $response->header($name);
     }
 
+    method body($text=undef) {
+        if (defined $text) {
+            $response->body($text);
+        }
+        $response->body;
+    }
+
     method html($code, $text) {
         $response->code($code);
         $response->header('Content-Type', 'text/html');
