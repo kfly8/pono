@@ -7,7 +7,7 @@ class Stump::Context {
     field $request :param; # Stump::Request
     field $response :param; # Stump::Response
     field $match_result :param :reader;
-    field $not_found_handler :param;
+    field $not_found_handler :param; # CodeRef: (Context: $c) -> Response
 
     method res() { $response }
     method req() { $request }
