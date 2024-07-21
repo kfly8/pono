@@ -2,6 +2,7 @@ use v5.40;
 use experimental qw(class);
 
 use Stump::JSON;
+use Stump::Util;
 
 class Stump::Context {
     field $request :param; # Stump::Request
@@ -64,7 +65,7 @@ class Stump::Context {
     method set($key, $value) {
         if ($Variables) {
             if (my $type = $Variables->{$key}) {
-                Carp::croak "Value for '$key' must be $type, got ", $value unless $type->check($value);
+                Carp::croak "Value for '$key' must be $type, got ", Stump::Util::ddf($value) unless $type->check($value);
             }
             else {
                 Carp::croak "Variables $key is not exists";
