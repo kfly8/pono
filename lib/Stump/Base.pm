@@ -43,11 +43,7 @@ class Stump::Base {
         return $self->router->match($method, $path);
     }
 
-    my sub dispatch($self, $request, $opts) {
-        my $not_found_handler = $opts->{not_found_handler} or die 'not_found_handler is required';
-        my $error_handler = $opts->{error_handler} or die 'error_handler is required';
-        my $Variables = $opts->{Variables};
-
+    method dispatch($request) {
         my $path = $self->get_path($request);
         my $match_result = match_route($self, $request->method, $path);
 
@@ -123,11 +119,7 @@ class Stump::Base {
     method psgi() {
         sub ($env) {
             my $req = Stump::Request->new(env => $env);
-            my $res = dispatch($self, $req, {
-                not_found_handler => $not_found_handler,
-                error_handler => $error_handler,
-                Variables => $Variables,
-            });
+            my $res = $self->dispatch($req);
             $res->finalize;
         }
     }
