@@ -14,6 +14,15 @@ class Stump::Base {
         return $c->text(404, 'Not Found');
     };
 
+    field $error_handler = sub ($err, $c) {
+        if (blessed($err) && $err->can('get_response')) {
+            return $err->get_response();
+        }
+
+        warn $err;
+        return $c->text(500, 'Internal Server Error');
+    };
+
     my sub add_route($self, $method, $path, $handler) {
         $method = uc $method;
         my $r = { path => $path, method => $method, handler => $handler };
@@ -25,7 +34,10 @@ class Stump::Base {
         return $self->router->match($method, $path);
     }
 
-    my sub dispatch($self, $request, $opts = {}) {
+    my sub dispatch($self, $request, $opts) {
+        my $not_found_handler = $opts->{not_found_handler} or die 'not_found_handler is required';
+        my $error_handler = $opts->{error_handler} or die 'error_handler is required';
+
         my $path = $self->get_path($request);
         my $match_result = match_route($self, $request->method, $path);
 
@@ -33,7 +45,7 @@ class Stump::Base {
             request      => $request,
             response     => Stump::Response->new,
             match_result => $match_result,
-            not_found_handler => $opts->{not_found_handler},
+            not_found_handler => $not_found_handler,
         );
         my $match_handlers = $match_result->[0];
 
@@ -43,29 +55,25 @@ class Stump::Base {
                 $res = $match_handlers->[0][0][0]->($c);
             }
             catch ($err) {
-                return $self->error_handler($err, $c);
+                return $error_handler->($err, $c);
             }
 
-            return $res // $c->not_found();
+            return $res // $not_found_handler->($c);
             # TODO Promise
         }
 
         # TODO compose handlers
 
-        $c->not_found();
-    }
-
-    method error_handler($err, $c) {
-        if (blessed($err) && $err->can('get_response')) {
-            return $err->get_response();
-        }
-
-        warn $err;
-        return $c->text(500, 'Internal Server Error');
+        $not_found_handler->($c);
     }
 
     method not_found($handler) {
         $not_found_handler = $handler;
+        return $self;
+    }
+
+    method on_error($handler) {
+        $error_handler = $handler;
         return $self;
     }
 
@@ -106,6 +114,7 @@ class Stump::Base {
             my $req = Stump::Request->new(env => $env);
             my $res = dispatch($self, $req, {
                 not_found_handler => $not_found_handler,
+                error_handler => $error_handler,
             });
             $res->finalize;
         }
