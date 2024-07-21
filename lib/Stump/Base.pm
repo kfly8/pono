@@ -37,6 +37,7 @@ class Stump::Base {
         my $r = { path => $path, method => $method, handler => $handler };
         $self->router->add($method, $path, [$handler, $r]);
         push $self->routes->@*, $r;
+        return $self;
     }
 
     my sub match_route($self, $method, $path) {
