@@ -31,14 +31,14 @@ class Stump::Context {
 
     method html($code, $text) {
         $response->code($code);
-        $response->header('Content-Type', 'text/html');
+        $response->header('Content-Type', 'text/html; charset=UTF-8');
         $response->body($text);
         $response;
     }
 
     method text($code, $text) {
         $response->code($code);
-        $response->header('Content-Type', 'text/plain');
+        $response->header('Content-Type', 'text/plain; charset=UTF-8');
         $response->body($text);
         $response;
     }
@@ -47,7 +47,7 @@ class Stump::Context {
         my $json = Stump::JSON::encode_json($data, $spec);
 
         $response->code($code);
-        $response->header('Content-Type', 'application/json');
+        $response->header('Content-Type', 'application/json; charset=UTF-8');
         $response->body($json);
         $response;
     }
