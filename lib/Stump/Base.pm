@@ -10,6 +10,10 @@ class Stump::Base {
     field $router :param = undef; # isa Stump::Router
     field $routes :reader = []; # isa ArrayRef[RouterRoute]
 
+    field $not_found_handler = sub ($c) {
+        return $c->text(404, 'Not Found');
+    };
+
     my sub add_route($self, $method, $path, $handler) {
         $method = uc $method;
         my $r = { path => $path, method => $method, handler => $handler };
@@ -21,14 +25,15 @@ class Stump::Base {
         return $self->router->match($method, $path);
     }
 
-    my sub dispatch($self, $request) {
+    my sub dispatch($self, $request, $opts = {}) {
         my $path = $self->get_path($request);
         my $match_result = match_route($self, $request->method, $path);
 
         my $c = Stump::Context->new(
             request      => $request,
             response     => Stump::Response->new,
-            match_result => $match_result
+            match_result => $match_result,
+            not_found_handler => $opts->{not_found_handler},
         );
         my $match_handlers = $match_result->[0];
 
@@ -41,13 +46,13 @@ class Stump::Base {
                 return $self->error_handler($err, $c);
             }
 
-            return $res // $self->not_found_handler($c);
+            return $res // $c->not_found();
             # TODO Promise
         }
 
         # TODO compose handlers
 
-        $self->not_found_handler($c);
+        $c->not_found();
     }
 
     method error_handler($err, $c) {
@@ -59,8 +64,9 @@ class Stump::Base {
         return $c->text(500, 'Internal Server Error');
     }
 
-    method not_found_handler($c) {
-        return $c->text(404, 'Not Found');
+    method not_found($handler) {
+        $not_found_handler = $handler;
+        return $self;
     }
 
     method router($r = undef) {
@@ -98,7 +104,9 @@ class Stump::Base {
     method psgi() {
         sub ($env) {
             my $req = Stump::Request->new(env => $env);
-            my $res = dispatch($self, $req);
+            my $res = dispatch($self, $req, {
+                not_found_handler => $not_found_handler,
+            });
             $res->finalize;
         }
     }

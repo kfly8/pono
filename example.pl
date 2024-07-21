@@ -9,4 +9,8 @@ $app->get('/json', sub ($c) {
     $c->json(HTTP_OK, { hello => '世界'})
 });
 
+$app->not_found(sub ($c) {
+    $c->text(404, 'Custom Not Found')
+});
+
 $app->psgi;

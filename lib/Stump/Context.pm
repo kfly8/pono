@@ -7,6 +7,7 @@ class Stump::Context {
     field $request :param; # Stump::Request
     field $response :param; # Stump::Response
     field $match_result :param :reader;
+    field $not_found_handler :param;
 
     method res() { $response }
     method req() { $request }
@@ -46,5 +47,9 @@ class Stump::Context {
         $response->header('Content-Type', 'application/json');
         $response->body($json);
         $response;
+    }
+
+    method not_found() {
+        $not_found_handler->($self);
     }
 }
