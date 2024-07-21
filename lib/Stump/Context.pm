@@ -8,6 +8,7 @@ class Stump::Context {
     field $response :param; # Stump::Response
     field $match_result :param :reader;
     field $not_found_handler :param; # CodeRef: (Context: $c) -> Response
+    field $var = {};
 
     method res() { $response }
     method req() { $request }
@@ -57,5 +58,15 @@ class Stump::Context {
         $response->code($code);
         $response->header('Location' => $url);
         $response;
+    }
+
+    method set($key, $value) {
+        # TODO check value
+        $var->{$key} = $value;
+    }
+
+    method get($key) {
+        # TODO check exists key
+        $var->{$key}
     }
 }
