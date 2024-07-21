@@ -52,4 +52,10 @@ class Stump::Context {
     method not_found() {
         $not_found_handler->($self);
     }
+
+    method redirect($url, $code=302) {
+        $response->code($code);
+        $response->header('Location' => $url);
+        $response;
+    }
 }
