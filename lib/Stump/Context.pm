@@ -9,6 +9,7 @@ class Stump::Context {
     field $match_result :param :reader;
     field $not_found_handler :param; # CodeRef: (Context: $c) -> Response
     field $var = {};
+    field $Variables :param = undef;
 
     method res() { $response }
     method req() { $request }
@@ -61,12 +62,23 @@ class Stump::Context {
     }
 
     method set($key, $value) {
-        # TODO check value
+        if ($Variables) {
+            if (my $type = $Variables->{$key}) {
+                Carp::croak "Value for '$key' must be $type, got ", $value unless $type->check($value);
+            }
+            else {
+                Carp::croak "Variables $key is not exists";
+            }
+        }
+
         $var->{$key} = $value;
     }
 
     method get($key) {
-        # TODO check exists key
+        if ($Variables) {
+            Carp::croak "Variables $key is not exists" unless exists $Variables->{$key};
+        }
+
         $var->{$key}
     }
 }

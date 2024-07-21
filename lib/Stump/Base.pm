@@ -10,6 +10,8 @@ class Stump::Base {
     field $router :param = undef; # isa Stump::Router
     field $routes :reader = []; # isa ArrayRef[RouterRoute]
 
+    field $Variables :param = undef; # Type for c.set/get. e.g. { key1 => Int, key2 => Str }
+
     field $not_found_handler = sub ($c) {
         return $c->text(404, 'Not Found');
     };
@@ -44,6 +46,7 @@ class Stump::Base {
     my sub dispatch($self, $request, $opts) {
         my $not_found_handler = $opts->{not_found_handler} or die 'not_found_handler is required';
         my $error_handler = $opts->{error_handler} or die 'error_handler is required';
+        my $Variables = $opts->{Variables};
 
         my $path = $self->get_path($request);
         my $match_result = match_route($self, $request->method, $path);
@@ -53,6 +56,7 @@ class Stump::Base {
             response     => Stump::Response->new,
             match_result => $match_result,
             not_found_handler => $not_found_handler,
+            Variables    => $Variables,
         );
         my $match_handlers = $match_result->[0];
 
@@ -122,6 +126,7 @@ class Stump::Base {
             my $res = dispatch($self, $req, {
                 not_found_handler => $not_found_handler,
                 error_handler => $error_handler,
+                Variables => $Variables,
             });
             $res->finalize;
         }
