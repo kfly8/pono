@@ -15,13 +15,20 @@ class Stump::Base {
     };
 
     field $error_handler = sub ($err, $c) {
-        if (blessed($err) && $err->can('get_response')) {
+        if ($err->can('get_response')) {
             return $err->get_response();
         }
 
         warn $err;
         return $c->text(500, 'Internal Server Error');
     };
+
+    my sub handle_error($err, $c, $error_handler) {
+        if (blessed($err)) {
+            return $error_handler->($err, $c);
+        }
+        Carp::croak $err;
+    }
 
     my sub add_route($self, $method, $path, $handler) {
         $method = uc $method;
@@ -55,7 +62,7 @@ class Stump::Base {
                 $res = $match_handlers->[0][0][0]->($c);
             }
             catch ($err) {
-                return $error_handler->($err, $c);
+                return handle_error($err, $c, $error_handler);
             }
 
             return $res // $not_found_handler->($c);
