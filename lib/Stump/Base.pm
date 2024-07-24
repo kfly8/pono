@@ -66,8 +66,10 @@ class Stump::Base {
                 return handle_error($err, $c, $error_handler);
             }
 
-            return $res // $not_found_handler->($c);
-            # TODO Promise
+            return $res isa Future
+                ? $res->then(sub ($r) { $r // $not_found_handler->($c) })
+                      ->catch(sub ($e) { handle_error($e, $c, $error_handler) })
+                : $res // $not_found_handler->($c);
         }
 
         # TODO compose handlers
@@ -115,13 +117,14 @@ class Stump::Base {
         add_route($self, 'options', $path, $handler);
     }
 
-
-
     method psgi() {
         sub ($env) {
             my $req = Stump::Request->new(env => $env);
             my $res = $self->dispatch($req);
-            $res->finalize;
+
+            $res isa Future
+            ? $res->then( sub ($r) { $r->finalize } )->get()
+            : $res->finalize;
         }
     }
 

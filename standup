@@ -1,0 +1,25 @@
+#!perl
+use v5.40;
+use utf8;
+
+use Net::Async::HTTP::Server::PSGI;
+use IO::Async::Loop;
+
+my $psgi = $ARGV[0] or die "Usage: $0 <psgi>\n";
+
+use Plack::Util;
+my $app = Plack::Util::load_psgi $psgi;
+
+my $loop = IO::Async::Loop->new;
+
+my $httpserver = Net::Async::HTTP::Server::PSGI->new(
+   app => $app,
+);
+
+$loop->add( $httpserver );
+
+$httpserver->listen(
+   addr => { family => "inet6", socktype => "stream", port => 8080 },
+)->get;
+
+$loop->run;

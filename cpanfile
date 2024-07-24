@@ -12,6 +12,12 @@ requires 'Hash::MultiValue';
 requires 'HTTP::Parser';
 recommends 'HTTP::Parser::XS';
 
+requires 'Future';
+recommends 'Future::XS';
+requires 'Future::AsyncAwait';
+
+requires 'Net::Async::HTTP::Server::PSGI';
+
 on 'test' => sub {
     requires 'Test2::V0';
     requires 'Unicode::GCString';
