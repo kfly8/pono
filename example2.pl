@@ -1,7 +1,7 @@
-use Stump;
+use Pono;
 use Types::Standard -types;
 
-my $app = Stump->new(
+my $app = Pono->new(
     Variables => {
         foo => Int,
     }

@@ -1,8 +1,8 @@
-use Stump;
+use Pono;
 
-my $app = Stump->new;
+my $app = Pono->new;
 $app->get('/', sub ($c) {
-    $c->text(HTTP_OK, 'Hello Stump!')
+    $c->text(HTTP_OK, 'Hello Pono!')
 });
 
 $app->get('/json', sub ($c) {

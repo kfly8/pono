@@ -2,7 +2,7 @@ use v5.40;
 use utf8;
 use experimental qw(class);
 
-class Stump::Request::Upload {
+class Pono::Request::Upload {
     field $headers  :param :reader;
     field $tempname :param :reader;
     field $size     :param :reader;

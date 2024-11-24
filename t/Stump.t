@@ -2,12 +2,12 @@ use v5.40;
 use utf8;
 use Test2::V0;
 
-use Stump;
+use Pono;
 use HTTP::Request::Common;
 
 subtest 'GET Request' => sub {
     subtest 'without middleware' => sub {
-        my $app = Stump->new;
+        my $app = Pono->new;
 
         $app->get('/hello', sub ($c) {
             $c->res->code(200);
@@ -16,8 +16,8 @@ subtest 'GET Request' => sub {
         });
 
         $app->get('/hello-with-shortcuts', sub ($c) {
-            $c->header('X-Custom', 'This is Stump');
-            $c->html(201, '<h1>Stump!!!</h1>');
+            $c->header('X-Custom', 'This is Pono');
+            $c->html(201, '<h1>Pono!!!</h1>');
         });
 
         $app->get('/hello-json', sub ($c) {
@@ -50,8 +50,8 @@ subtest 'GET Request' => sub {
         subtest 'GET /hello-with-shortcuts is ok', sub {
             my $res = $app->test_request(GET '/hello-with-shortcuts');
             is $res->code, 201;
-            is $res->header('X-Custom'), 'This is Stump';
-            is $res->content, '<h1>Stump!!!</h1>';
+            is $res->header('X-Custom'), 'This is Pono';
+            is $res->content, '<h1>Pono!!!</h1>';
         };
 
         subtest 'GET / is not found', sub {

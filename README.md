@@ -1,15 +1,15 @@
 
 # NAME
 
-Stump - It's new $module
+Pono - It's new $module
 
 # SYNOPSIS
 
-    use Stump;
+    use Pono;
 
 # DESCRIPTION
 
-Stump is ...
+Pono is ...
 
 # LICENSE
 

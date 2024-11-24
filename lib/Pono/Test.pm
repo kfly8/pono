@@ -8,10 +8,10 @@ use HTTP::Response;
 use HTTP::Message::PSGI;
 
 use Encode ();
-use Stump::JSON;
+use Pono::JSON;
 
-class Stump::Test {
-    field $app :param; # Stump
+class Pono::Test {
+    field $app :param; # Pono
 
     method request($http_request) {
         unless ($http_request isa HTTP::Request) {
@@ -36,5 +36,5 @@ class Stump::Test {
 }
 
 sub HTTP::Response::json($self) {
-    Stump::JSON::decode_json(Encode::decode_utf8($self->content));
+    Pono::JSON::decode_json(Encode::decode_utf8($self->content));
 }

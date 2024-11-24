@@ -1,4 +1,4 @@
-package Stump::Util::Request;
+package Pono::Util::Request;
 use v5.40;
 use utf8;
 
@@ -8,7 +8,7 @@ use HTTP::Headers::Fast;
 use Hash::MultiValue;
 use WWW::Form::UrlEncoded ();
 
-use Stump::Request::Upload;
+use Pono::Request::Upload;
 
 sub decode($env, $v) {
     Encode::decode_utf8($v);
@@ -33,7 +33,7 @@ sub parse_form_data($env) {
     for my ($k, $v) ($uploads->@*) {
         my %copy = %$v;
         $copy{headers} = HTTP::Headers::Fast->new(@{$v->{headers}});
-        $upload_hash->add($k, Stump::Request::Upload->new(%copy));
+        $upload_hash->add($k, Pono::Request::Upload->new(%copy));
     }
 
     return {
@@ -52,7 +52,7 @@ sub form_data_parser($env) {
 sub parse_json($env) {
     if (match_content_type($env, 'application/json')) {
         my $decoded_body = decode($env, raw_body($env));
-        my $json = Stump::JSON::decode_json($decoded_body, my $json_type);
+        my $json = Pono::JSON::decode_json($decoded_body, my $json_type);
         return {
             json      => $json,
             json_type => $json_type,

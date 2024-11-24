@@ -1,12 +1,12 @@
 use v5.40;
 use experimental qw(class);
 
-use Stump::JSON;
-use Stump::Util;
+use Pono::JSON;
+use Pono::Util;
 
-class Stump::Context {
-    field $request :param; # Stump::Request
-    field $response :param; # Stump::Response
+class Pono::Context {
+    field $request :param; # Pono::Request
+    field $response :param; # Pono::Response
     field $match_result :param :reader;
     field $not_found_handler :param; # CodeRef: (Context: $c) -> Response
     field $var = {};
@@ -44,7 +44,7 @@ class Stump::Context {
     }
 
     method json($code, $data, $spec = undef) {
-        my $json = Stump::JSON::encode_json($data, $spec);
+        my $json = Pono::JSON::encode_json($data, $spec);
 
         $response->code($code);
         $response->header('Content-Type', 'application/json; charset=UTF-8');
@@ -65,7 +65,7 @@ class Stump::Context {
     method set($key, $value) {
         if ($Variables) {
             if (my $type = $Variables->{$key}) {
-                Carp::croak "Value for '$key' must be $type, got ", Stump::Util::ddf($value) unless $type->check($value);
+                Carp::croak "Value for '$key' must be $type, got ", Pono::Util::ddf($value) unless $type->check($value);
             }
             else {
                 Carp::croak "Variables $key is not exists";

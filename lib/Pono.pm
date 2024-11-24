@@ -5,8 +5,8 @@ use experimental qw(class);
 use HTTP::Status ();
 use Cpanel::JSON::XS::Type ();
 
-class Stump 0.01 :isa(Stump::Base) {
-    use Stump::Router::Linear;
+class Pono 0.01 :isa(Pono::Base) {
+    use Pono::Router::Linear;
     use Carp ();
 
     sub import($class) {
@@ -25,10 +25,10 @@ class Stump 0.01 :isa(Stump::Base) {
 
     ADJUST {
         if (!$self->router) {
-            $self->router(Stump::Router::Linear->new);
+            $self->router(Pono::Router::Linear->new);
         }
 
-        Carp::croak 'router must be a Stump::Router subclass' unless $self->router isa Stump::Router;
+        Carp::croak 'router must be a Pono::Router subclass' unless $self->router isa Pono::Router;
     }
 }
 
@@ -38,22 +38,22 @@ __END__
 
 =head1 NAME
 
-Stump - It's new $module
+Pono - It's new $module
 
 =head1 SYNOPSIS
 
-    use Stump;
+    use Pono;
 
-    my $app = Stump->new;
+    my $app = Pono->new;
     $app->get('/', sub ($c) {
-        $c->text(HTTP_OK, 'Hello Stump!')
+        $c->text(HTTP_OK, 'Hello Pono!')
     });
 
     $app->psgi;
 
 =head1 DESCRIPTION
 
-Stump is ...
+Pono is ...
 
 =head1 LICENSE
 

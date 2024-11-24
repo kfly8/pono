@@ -5,7 +5,7 @@ use experimental qw(class);
 use HTTP::Headers::Fast;
 use Encode ();
 
-class Stump::Response {
+class Pono::Response {
     field $code = 200;
     field $headers :reader = HTTP::Headers::Fast->new;
     field $body;

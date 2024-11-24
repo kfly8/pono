@@ -1,4 +1,4 @@
-package Stump::JSON;
+package Pono::JSON;
 use v5.40;
 use utf8;
 

@@ -1,7 +1,7 @@
 use v5.40;
 use experimental qw(class);
 
-class Stump::Router::Linear :isa(Stump::Router) {
+class Pono::Router::Linear :isa(Pono::Router) {
     field $routes = [];
 
     my $empty_params = {};
