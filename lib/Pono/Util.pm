@@ -1,5 +1,5 @@
 package Pono::Util;
-use v5.40;
+use v5.42;
 use utf8;
 
 our $DDFLen = 30;

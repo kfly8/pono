@@ -1,4 +1,4 @@
-#requires 'perl', '5.008001';
+requires 'perl', '5.042';
 
 requires 'WWW::Form::UrlEncoded';
 recommends 'WWW::Form::UrlEncoded::XS';

@@ -1,5 +1,5 @@
 package Pono::JSON;
-use v5.40;
+use v5.42;
 use utf8;
 
 use Exporter 'import';

@@ -1,4 +1,4 @@
-use v5.40;
+use v5.42;
 use utf8;
 use experimental qw(class);
 
@@ -12,8 +12,8 @@ class Pono 0.01 :isa(Pono::Base) {
     sub import($class) {
         $_->import for qw(strict warnings utf8);
 
-        feature->import(':5.40');
-        builtin->import(':5.40');
+        feature->import(':5.42');
+        builtin->import(':5.42');
         experimental->import('class');
 
         {
