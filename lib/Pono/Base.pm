@@ -25,14 +25,14 @@ class Pono::Base {
         return $c->text(500, 'Internal Server Error');
     };
 
-    my sub handle_error($err, $c, $error_handler) {
+    my method handle_error($err, $c, $error_handler) {
         if (blessed($err)) {
             return $error_handler->($err, $c);
         }
         Carp::croak $err;
     }
 
-    my sub add_route($self, $method, $path, $handler) {
+    my method add_route($method, $path, $handler) {
         $method = uc $method;
         my $r = { path => $path, method => $method, handler => $handler };
         $self->router->add($method, $path, [$handler, $r]);
@@ -40,13 +40,13 @@ class Pono::Base {
         return $self;
     }
 
-    my sub match_route($self, $method, $path) {
+    my method match_route($method, $path) {
         return $self->router->match($method, $path);
     }
 
-    method dispatch($request) {
+    my method dispatch($request) {
         my $path = $self->get_path($request);
-        my $match_result = match_route($self, $request->method, $path);
+        my $match_result = $self->&match_route($request->method, $path);
 
         my $c = Pono::Context->new(
             request      => $request,
@@ -63,7 +63,7 @@ class Pono::Base {
                 $res = $match_handlers->[0][0][0]->($c);
             }
             catch ($err) {
-                return handle_error($err, $c, $error_handler);
+                return $self->&handle_error($err, $c, $error_handler);
             }
 
             return $res // $not_found_handler->($c);
@@ -92,27 +92,27 @@ class Pono::Base {
 
     method get($path, $handler) {
         # TODO HEAD method request
-        add_route($self, 'get', $path, $handler);
+        $self->&add_route('get', $path, $handler);
     }
 
     method post($path, $handler) {
-        add_route($self, 'post', $path, $handler);
+        $self->&add_route('post', $path, $handler);
     }
 
     method put($path, $handler) {
-        add_route($self, 'put', $path, $handler);
+        $self->&add_route('put', $path, $handler);
     }
 
     method delete($path, $handler) {
-        add_route($self, 'delete', $path, $handler);
+        $self->&add_route('delete', $path, $handler);
     }
 
     method patch($path, $handler) {
-        add_route($self, 'patch', $path, $handler);
+        $self->&add_route('patch', $path, $handler);
     }
 
     method options($path, $handler) {
-        add_route($self, 'options', $path, $handler);
+        $self->&add_route('options', $path, $handler);
     }
 
 
@@ -120,7 +120,7 @@ class Pono::Base {
     method psgi() {
         sub ($env) {
             my $req = Pono::Request->new(env => $env);
-            my $res = $self->dispatch($req);
+            my $res = $self->&dispatch($req);
             $res->finalize;
         }
     }
