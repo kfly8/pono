@@ -15,7 +15,7 @@ class Pono::Test {
 
     method request($http_request) {
         unless ($http_request isa HTTP::Request) {
-            Carp::croak 'test_request() requires an HTTP::Request object';
+            Carp::croak 'request() requires an HTTP::Request object';
         }
 
         $http_request->uri->scheme('http')    unless defined $http_request->uri->scheme;

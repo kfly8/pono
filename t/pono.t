@@ -25,42 +25,42 @@ subtest 'GET Request' => sub {
         });
 
         subtest 'GET http://localhost/hello is ok', sub {
-            my $res = $app->test_request(GET 'http://localhost/hello');
+            my $res = $app->request(GET 'http://localhost/hello');
             is $res->code, 200;
             is $res->content, 'hello';
         };
 
         subtest 'GET httphello is ng', sub {
-            my $res = $app->test_request(GET 'httphello');
+            my $res = $app->request(GET 'httphello');
             is $res->code, 404;
         };
 
         subtest 'GET /hello is ok', sub {
-            my $res = $app->test_request(GET '/hello');
+            my $res = $app->request(GET '/hello');
             is $res->code, 200;
             is $res->content, 'hello';
         };
 
         subtest 'GET hello is ok', sub {
-            my $res = $app->test_request(GET 'hello');
+            my $res = $app->request(GET 'hello');
             is $res->code, 200;
             is $res->content, 'hello';
         };
 
         subtest 'GET /hello-with-shortcuts is ok', sub {
-            my $res = $app->test_request(GET '/hello-with-shortcuts');
+            my $res = $app->request(GET '/hello-with-shortcuts');
             is $res->code, 201;
             is $res->header('X-Custom'), 'This is Pono';
             is $res->content, '<h1>Pono!!!</h1>';
         };
 
         subtest 'GET / is not found', sub {
-            my $res = $app->test_request(GET '/');
+            my $res = $app->request(GET '/');
             is $res->code, 404;
         };
 
         subtest 'GET /hello-json', sub {
-            my $res = $app->test_request(GET '/hello-json');
+            my $res = $app->request(GET '/hello-json');
             is $res->code, 200;
             is $res->json, { HELLO => '🪵' };
         };

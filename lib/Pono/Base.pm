@@ -130,7 +130,7 @@ class Pono::Base {
         $request->path;
     }
 
-    method test_request($http_request) {
+    method request($http_request) {
         require Pono::Test;
         my $test = Pono::Test->new(app => $self);
         my $res = $test->request($http_request);
