@@ -17,11 +17,11 @@ subtest 'GET Request' => sub {
 
         $app->get('/hello-with-shortcuts', sub ($c) {
             $c->header('X-Custom', 'This is Pono');
-            $c->html(201, '<h1>Pono!!!</h1>');
+            $c->html('<h1>Pono!!!</h1>', 201);
         });
 
         $app->get('/hello-json', sub ($c) {
-            $c->json(200, { HELLO => '🪵' });
+            $c->json({ HELLO => '🐪' });
         });
 
         subtest 'GET http://localhost/hello is ok', sub {
@@ -62,7 +62,7 @@ subtest 'GET Request' => sub {
         subtest 'GET /hello-json', sub {
             my $res = $app->request(GET '/hello-json');
             is $res->code, 200;
-            is $res->json, { HELLO => '🪵' };
+            is $res->json, { HELLO => '🐪' };
         };
     }
 };
@@ -73,7 +73,7 @@ subtest 'HEAD method', sub {
     $app->get('/page', sub ($c) {
         $c->header('X-Message', 'Foo');
         $c->header('X-Method', $c->req->method);
-        $c->text(200, '/page');
+        $c->text('/page');
     });
 
     subtest 'it should return 200 response with body - GET /page', sub {

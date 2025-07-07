@@ -29,24 +29,29 @@ class Pono::Context {
         $response->body;
     }
 
-    method html($code, $text) {
-        $response->code($code);
+    method html($text, $code) {
+        $response->code($code) if defined $code;
         $response->header('Content-Type', 'text/html; charset=UTF-8');
         $response->body($text);
         $response;
     }
 
-    method text($code, $text) {
-        $response->code($code);
+    method text($text, $code = undef) {
+        $response->code($code) if defined $code;
         $response->header('Content-Type', 'text/plain; charset=UTF-8');
         $response->body($text);
         $response;
     }
 
-    method json($code, $data, $spec = undef) {
+    method json($data, @rest) {
+        my ($spec, $code) = @rest == 0 ? (undef, undef)
+                          : @rest == 1 ? (undef, $rest[0])
+                          : @rest == 2 ? @rest
+                          : Carp::croak "json() takes 0, 1 or 2 arguments, got ", scalar @rest;
+
         my $json = Pono::JSON::encode_json($data, $spec);
 
-        $response->code($code);
+        $response->code($code) if defined $code;
         $response->header('Content-Type', 'application/json; charset=UTF-8');
         $response->body($json);
         $response;

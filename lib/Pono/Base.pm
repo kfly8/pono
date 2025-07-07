@@ -7,7 +7,7 @@ use Pono::Response;
 use Pono::Context;
 
 my $not_found_handler = sub ($c) {
-    return $c->text(404, 'Not Found');
+    return $c->text('Not Found', 404);
 };
 
 my $error_handler = sub ($err, $c) {
@@ -15,7 +15,7 @@ my $error_handler = sub ($err, $c) {
         return $err->get_response();
     }
     warn $err;
-    return $c->text(500, 'Internal Server Error');
+    return $c->text('Internal Server Error', 500);
 };
 
 class Pono::Base {
