@@ -6,84 +6,32 @@ use Pono::Request;
 use Pono::Response;
 use Pono::Context;
 
+my $not_found_handler = sub ($c) {
+    return $c->text(404, 'Not Found');
+};
+
+my $error_handler = sub ($err, $c) {
+    if ($err->can('get_response')) {
+        return $err->get_response();
+    }
+    warn $err;
+    return $c->text(500, 'Internal Server Error');
+};
+
 class Pono::Base {
     field $router :param = undef; # isa Pono::Router
     field $routes :reader = []; # isa ArrayRef[RouterRoute]
 
     field $Variables :param = undef; # Type for c.set/get. e.g. { key1 => Int, key2 => Str }
 
-    field $not_found_handler = sub ($c) {
-        return $c->text(404, 'Not Found');
-    };
+    field $not_found_handler = $not_found_handler;
+    field $error_handler = $error_handler;
 
-    field $error_handler = sub ($err, $c) {
-        if ($err->can('get_response')) {
-            return $err->get_response();
-        }
-
-        warn $err;
-        return $c->text(500, 'Internal Server Error');
-    };
-
-    my method handle_error($err, $c, $error_handler) {
-        if (blessed($err)) {
-            return $error_handler->($err, $c);
-        }
-        Carp::croak $err;
-    }
-
-    my method add_route($method, $path, $handler) {
-        $method = uc $method;
-        my $r = { path => $path, method => $method, handler => $handler };
-        $self->router->add($method, $path, [$handler, $r]);
-        push $self->routes->@*, $r;
-        return $self;
-    }
-
-    my method match_route($method, $path) {
-        return $self->router->match($method, $path);
-    }
-
-    my method dispatch; # declare to private method
-    method dispatch($request, $method) {
-        if ($method eq 'HEAD') {
-            # Handle HEAD method
-            my $res = $self->&dispatch($request, 'GET');
-            return Pono::Response->new(
-                code    => $res->code,
-                headers => $res->headers,
-            );
-        }
-
-        my $path = $self->get_path($request);
-        my $match_result = $self->&match_route($method, $path);
-
-        my $c = Pono::Context->new(
-            request      => $request,
-            response     => Pono::Response->new,
-            match_result => $match_result,
-            not_found_handler => $not_found_handler,
-            Variables    => $Variables,
-        );
-        my $match_handlers = $match_result->[0];
-
-        if ($match_handlers->@* == 1) {
-            my $res; # ReturnType
-            try {
-                $res = $match_handlers->[0][0][0]->($c);
-            }
-            catch ($err) {
-                return $self->&handle_error($err, $c, $error_handler);
-            }
-
-            return $res // $not_found_handler->($c);
-            # TODO Promise
-        }
-
-        # TODO compose handlers
-
-        $not_found_handler->($c);
-    }
+    # Declare private methods
+    my method handle_error;
+    my method add_route;
+    my method match_route;
+    my method dispatch;
 
     method not_found($handler) {
         $not_found_handler = $handler;
@@ -145,4 +93,69 @@ class Pono::Base {
         my $res = $test->request($http_request);
         $res;
     }
+
+
+
+    # Following methods are private
+    # -----------------------------
+
+    method handle_error($err, $c, $error_handler) {
+        if (blessed($err)) {
+            return $error_handler->($err, $c);
+        }
+        Carp::croak $err;
+    }
+
+    method add_route($method, $path, $handler) {
+        $method = uc $method;
+        my $r = { path => $path, method => $method, handler => $handler };
+        $self->router->add($method, $path, [$handler, $r]);
+        push $self->routes->@*, $r;
+        return $self;
+    }
+
+    method match_route($method, $path) {
+        return $self->router->match($method, $path);
+    }
+
+    method dispatch($request, $method) {
+        if ($method eq 'HEAD') {
+            # Handle HEAD method
+            my $res = $self->&dispatch($request, 'GET');
+            return Pono::Response->new(
+                code    => $res->code,
+                headers => $res->headers,
+            );
+        }
+
+        my $path = $self->get_path($request);
+        my $match_result = $self->&match_route($method, $path);
+
+        my $c = Pono::Context->new(
+            request      => $request,
+            response     => Pono::Response->new,
+            match_result => $match_result,
+            not_found_handler => $not_found_handler,
+            Variables    => $Variables,
+        );
+        my $match_handlers = $match_result->[0];
+
+        if ($match_handlers->@* == 1) {
+            my $res; # ReturnType
+            try {
+                $res = $match_handlers->[0][0][0]->($c);
+            }
+            catch ($err) {
+                return $self->&handle_error($err, $c, $error_handler);
+            }
+
+            return $res // $not_found_handler->($c);
+            # TODO Promise
+        }
+
+        # TODO compose handlers
+
+        $not_found_handler->($c);
+    }
+
 }
