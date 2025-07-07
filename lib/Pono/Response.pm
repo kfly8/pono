@@ -6,8 +6,8 @@ use HTTP::Headers::Fast;
 use Encode ();
 
 class Pono::Response {
-    field $code = 200;
-    field $headers :reader = HTTP::Headers::Fast->new;
+    field $code :param = 200;
+    field $headers :reader :param = HTTP::Headers::Fast->new;
     field $body;
 
     method header($name, $value=undef) {

@@ -67,4 +67,30 @@ subtest 'GET Request' => sub {
     }
 };
 
+subtest 'HEAD method', sub {
+    my $app = Pono->new;
+
+    $app->get('/page', sub ($c) {
+        $c->header('X-Message', 'Foo');
+        $c->header('X-Method', $c->req->method);
+        $c->text(200, '/page');
+    });
+
+    subtest 'it should return 200 response with body - GET /page', sub {
+        my $res = $app->request(GET '/page');
+        is $res->code, 200;
+        is $res->header('X-Message'), 'Foo';
+        is $res->header('X-Method'), 'GET';
+        is $res->content, '/page';
+    };
+
+    subtest 'it should return 200 response without body - HEAD /page', sub {
+        my $res = $app->request(HEAD '/page');
+        is $res->code, 200;
+        is $res->header('X-Message'), 'Foo';
+        is $res->header('X-Method'), 'HEAD';
+        is $res->content, '', 'body should be empty';
+    };
+};
+
 done_testing;

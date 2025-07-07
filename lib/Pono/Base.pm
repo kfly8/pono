@@ -44,9 +44,19 @@ class Pono::Base {
         return $self->router->match($method, $path);
     }
 
-    my method dispatch($request) {
+    my method dispatch; # declare to private method
+    method dispatch($request, $method) {
+        if ($method eq 'HEAD') {
+            # Handle HEAD method
+            my $res = $self->&dispatch($request, 'GET');
+            return Pono::Response->new(
+                code    => $res->code,
+                headers => $res->headers,
+            );
+        }
+
         my $path = $self->get_path($request);
-        my $match_result = $self->&match_route($request->method, $path);
+        my $match_result = $self->&match_route($method, $path);
 
         my $c = Pono::Context->new(
             request      => $request,
@@ -91,28 +101,27 @@ class Pono::Base {
     }
 
     method get($path, $handler) {
-        # TODO HEAD method request
-        $self->&add_route('get', $path, $handler);
+        $self->&add_route('GET', $path, $handler);
     }
 
     method post($path, $handler) {
-        $self->&add_route('post', $path, $handler);
+        $self->&add_route('POST', $path, $handler);
     }
 
     method put($path, $handler) {
-        $self->&add_route('put', $path, $handler);
+        $self->&add_route('PUT', $path, $handler);
     }
 
     method delete($path, $handler) {
-        $self->&add_route('delete', $path, $handler);
+        $self->&add_route('DELETE', $path, $handler);
     }
 
     method patch($path, $handler) {
-        $self->&add_route('patch', $path, $handler);
+        $self->&add_route('PATCH', $path, $handler);
     }
 
     method options($path, $handler) {
-        $self->&add_route('options', $path, $handler);
+        $self->&add_route('OPTIONS', $path, $handler);
     }
 
 
@@ -120,7 +129,7 @@ class Pono::Base {
     method psgi() {
         sub ($env) {
             my $req = Pono::Request->new(env => $env);
-            my $res = $self->&dispatch($req);
+            my $res = $self->&dispatch($req, uc $req->method);
             $res->finalize;
         }
     }
