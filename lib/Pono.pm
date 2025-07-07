@@ -2,9 +2,6 @@ use v5.42;
 use utf8;
 use experimental qw(class);
 
-use HTTP::Status ();
-use Cpanel::JSON::XS::Type ();
-
 class Pono 0.01 :isa(Pono::Base) {
     use Pono::Router::Linear;
     use Carp ();
@@ -15,12 +12,6 @@ class Pono 0.01 :isa(Pono::Base) {
         feature->import(':5.42');
         builtin->import(':5.42');
         experimental->import('class');
-
-        {
-            local $Exporter::ExportLevel = 1;
-            HTTP::Status->import(':constants');
-            Cpanel::JSON::XS::Type->import();
-        }
     }
 
     ADJUST {
